@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+      package="com.findlaw.titanium.c2dm"
+      android:versionCode="1"
+      android:versionName="1"
+>
+	<uses-sdk android:minSdkVersion="4" />
+
+	<supports-screens 
+		android:smallScreens="false"
+		android:normalScreens="true"
+		android:largeScreens="true"
+		android:anyDensity="false"
+	/>
+    
+	<application
+    	android:icon="@drawable/appicon"
+      	android:label="c2dm"
+      	android:name="C2dmApplication"
+      	android:debuggable="false"
+	>
+    	<activity
+        	android:name=".C2dmActivity"
+            android:label="c2dm"
+			android:theme="@style/Theme.Titanium"
+            android:configChanges="keyboardHidden|orientation"
+        >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+		
+		<activity
+        	android:name="org.appcelerator.titanium.TiActivity"
+        	android:configChanges="keyboardHidden|orientation"
+      	/>
+		<activity android:name="org.appcelerator.titanium.TiModalActivity"
+			android:configChanges="keyboardHidden|orientation"
+			android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
+		/>
+		<activity android:name="ti.modules.titanium.ui.TiTabActivity"
+			android:configChanges="keyboardHidden|orientation"
+		/>
+		<activity android:name="ti.modules.titanium.media.TiVideoActivity"
+			android:configChanges="keyboardHidden|orientation"
+			android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+		/>
+
+		<service
+			android:name="org.appcelerator.titanium.analytics.TiAnalyticsService"
+			android:exported="false"
+		/>
+
+		
+
+	</application>
+	
+	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+	<uses-permission android:name="android.permission.INTERNET"/>
+
+
+	<permission android:name="com.findlaw.titanium.c2dm.permission.C2D_MESSAGE" android:protectionLevel="signature" />
+	<uses-permission android:name="com.findlaw.titanium.c2dm.permission.C2D_MESSAGE" />
+
+	<!-- This app has permission to register and receive message -->
+	<uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+
+	<!-- Send the registration id to the server -->
+	<uses-permission android:name="android.permission.INTERNET" />
+	
+</manifest>

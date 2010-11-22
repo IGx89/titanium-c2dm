@@ -1,0 +1,18 @@
+#
+# this is your module manifest and used by Titanium
+# during compilation, packaging, distribution, etc.
+#
+version: 0.1
+description: titanium-c2dm
+author: Matthew Lieder
+license: LGPL 2.1
+copyright: Copyright (c) 2010 by Matthew Lieder
+
+
+# these should not be edited
+name: c2dm
+moduleid: com.findlaw.titanium.c2dm
+guid: bc223a51-1bf1-4014-bc0c-483a783b1c7e
+platform: android
+minsdk: 1.5.0
+android.sdk: /opt/android-sdk
