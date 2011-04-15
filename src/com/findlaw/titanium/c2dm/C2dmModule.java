@@ -8,13 +8,19 @@
  */
 package com.findlaw.titanium.c2dm;
 
+import org.appcelerator.kroll.KrollDict;
+import org.appcelerator.kroll.KrollInvocation;
 import org.appcelerator.kroll.KrollModule;
 import org.appcelerator.kroll.annotations.Kroll;
 
 import org.appcelerator.titanium.TiContext;
+import org.appcelerator.titanium.kroll.KrollCallback;
 import org.appcelerator.titanium.util.Log;
 
 import com.google.android.c2dm.C2DMessaging;
+
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 
 @Kroll.module(name="C2dm", id="com.findlaw.titanium.c2dm")
 public class C2dmModule extends KrollModule
@@ -24,6 +30,10 @@ public class C2dmModule extends KrollModule
 	
 	private static C2dmModule _THIS;
 	
+	private KrollCallback successCallback;
+	private KrollCallback errorCallback;
+	private KrollCallback messageCallback;
+	
 	public C2dmModule(TiContext tiContext) {
 		super(tiContext);
 		
@@ -32,10 +42,19 @@ public class C2dmModule extends KrollModule
 
 	// Methods
 	@Kroll.method
-	public void register(String senderId) {
+	public void register(String senderId, KrollDict options) {
 		Log.d(LCAT, "register called");
 		
-        C2DMessaging.register(getTiContext().getTiApp(), senderId);
+		successCallback = (KrollCallback)options.get("success");
+		errorCallback = (KrollCallback)options.get("error");
+		messageCallback = (KrollCallback)options.get("callback");
+		
+		String registrationId = getRegistrationId();
+		if(registrationId != null && registrationId.length() > 0) {
+			sendSuccess(registrationId);
+		} else {
+			C2DMessaging.register(getTiContext().getTiApp(), senderId);
+		}
 	}
 	
 	// Properties
@@ -43,6 +62,33 @@ public class C2dmModule extends KrollModule
 	public String getRegistrationId() {
 		Log.d(LCAT, "get registrationId property");
 		return C2DMessaging.getRegistrationId(getTiContext().getTiApp());
+	}
+	
+	public void sendSuccess(String registrationId) {
+		if(successCallback != null) {
+			KrollDict data = new KrollDict();
+			data.put("registrationId", registrationId);
+		
+			successCallback.callAsync(data);
+		}
+	}
+	
+	public void sendError(String error) {
+		if(errorCallback != null) {
+			KrollDict data = new KrollDict();
+			data.put("error", error);
+		
+			errorCallback.callAsync(data);
+		}
+	}
+	
+	public void sendMessage(KrollDict messageData) {
+		if(messageCallback != null) {
+			KrollDict data = new KrollDict();
+			data.put("data", messageData);
+		
+			messageCallback.callSync(data);
+		}
 	}
 	
 	

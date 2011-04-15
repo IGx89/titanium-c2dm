@@ -1,48 +1,59 @@
-// This is a test harness for your module
-// You should do something interesting in this harness 
-// to test out the module and to provide instructions 
-// to users on how to use it by example.
-
-
-var senderId = 'john.doe@gmail.com'; // You'll need to put in your own account here
+var senderId = 'youraddress@gmail.com';
 
 var c2dm = require('com.findlaw.titanium.c2dm');
 Ti.API.info("module is => " + c2dm);
 
-c2dm.addEventListener('register', function(data) {
-	Ti.API.info('JS register event: ' + data.registrationId);
-	label.text = 'Registered: ' + data.registrationId;
+Ti.API.info('Registering...');
+c2dm.register(senderId, {
+	success:function(e)
+	{
+		Ti.API.info('JS registration success event: ' + e.registrationId);
+	
+		// TODO for you: send e.registrationId to your server-side database
+	},
+	error:function(e)
+	{
+		Ti.API.error("Error during registration: "+e.error);
+		
+		var message;
+		if(e.error == "ACCOUNT_MISSING") {
+			message = "No Google account found; you'll need to add one (in Settings/Accounts) in order to activate notifications";
+		} else {
+			message = "Error during registration: "+e.error
+		}
+		
+		Titanium.UI.createAlertDialog({
+			title: 'Push Notification Setup',
+			message: message,
+			buttonNames: ['OK']
+		}).show();
+	},
+	callback:function(e) // called when a push notification is received
+	{
+		Ti.API.info('JS message event: ' + JSON.stringify(e.data));
+		
+		var intent = Ti.Android.createIntent({
+			action: Ti.Android.ACTION_MAIN,
+			flags: Ti.Android.FLAG_ACTIVITY_NEW_TASK | Ti.Android.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED,
+			className: 'com.company.app.YourActivity',
+			packageName: 'com.company.app'
+		});
+		intent.addCategory(Ti.Android.CATEGORY_LAUNCHER);
+		  
+		// This is fairly static: Not much need to be altered here
+		var pending = Ti.Android.createPendingIntent({
+			activity: Ti.Android.currentActivity,
+			intent: intent,
+			type: Ti.Android.PENDING_INTENT_FOR_ACTIVITY,
+		});
+		
+		var notification = Ti.Android.createNotification({
+			contentIntent: pending,
+			contentTitle: 'New message',
+			contentText: e.data.message,
+			tickerText: "New message"
+		});
+		 
+		Ti.Android.NotificationManager.notify(1, notification);
+	}
 });
-c2dm.addEventListener('message', function(data) {
-	Ti.API.info('JS message event: ' + data.message);
-	label.text = 'Message: ' + data.message;
-});
-
-
-// open a single window
-var window = Ti.UI.createWindow({
-	backgroundColor:'white'
-});
-
-var label = Ti.UI.createLabel({top: 20, left: 5, right: 5});
-window.add(label);
-
-var button = Ti.UI.createButton({title: 'Register'});
-button.addEventListener('click', function() {
-	Ti.API.info('Registering...');
-	label.text = 'Registering...';
-	c2dm.register(senderId);
-});
-window.add(button);
-
-window.open();
-
-
-if(!c2dm.registrationId) {
-	Ti.API.info('Registering...');
-	label.text = 'Registering...';
-	c2dm.register(senderId);
-} else {
-	Ti.API.info('Current registration id: ' + c2dm.registrationId);
-	label.text = 'Current registration id: ' + c2dm.registrationId;
-}

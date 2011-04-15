@@ -53,7 +53,23 @@
 			android:exported="false"
 		/>
 
-		
+		<service android:name=".C2DMReceiver" />
+				
+		<!-- Only google service can send data messages for the app. If permission is not set -
+			 any other app can generate it --> 
+		<receiver android:name="com.google.android.c2dm.C2DMBroadcastReceiver"
+				  android:permission="com.google.android.c2dm.permission.SEND">
+			<!-- Receive the actual message -->
+			<intent-filter>
+				<action android:name="com.google.android.c2dm.intent.RECEIVE" />
+				<category android:name="com.findlaw.titanium.c2dm" />
+			</intent-filter>
+			<!-- Receive the registration id -->
+			<intent-filter>
+				<action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+				<category android:name="com.findlaw.titanium.c2dm" />
+			</intent-filter>
+		</receiver>
 
 	</application>
 	
@@ -71,5 +87,7 @@
 
 	<!-- Send the registration id to the server -->
 	<uses-permission android:name="android.permission.INTERNET" />
+	
+	<uses-permission android:name="android.permission.WAKE_LOCK" />
 	
 </manifest>
