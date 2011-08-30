@@ -6,7 +6,6 @@ import org.appcelerator.kroll.KrollDict;
 import org.appcelerator.titanium.util.Log;
 
 import com.google.android.c2dm.C2DMBaseReceiver;
-import com.keyview.souguide.C2DMReceiver;
 
 import android.app.Notification;
 import android.app.NotificationManager;
